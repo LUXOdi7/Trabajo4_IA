@@ -1,122 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🧬 Horario Común con Algoritmo Genético</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧬 Algoritmo Genético: Encuentro de Horario Común</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <h1><i class="fas fa-dna"></i> Horario Común con Algoritmo Genético</h1>
-      <p>Encuentra un horario libre de 2 horas para 4 profesores con disponibilidad distinta.</p>
-    </header>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-dna"></i> Algoritmo Genético: Búsqueda de Horario Común</h1>
+            <p>Encuentra un bloque de 2 horas donde 4 profesores puedan coincidir.</p>
+        </header>
 
-    <main class="main-content">
-      <section class="control-panel">
-        <div class="card">
-          <h2><i class="fas fa-cogs"></i> Configuración</h2>
-          <div class="form-group">
-            <label for="generaciones"><i class="fas fa-clock"></i> Generaciones:</label>
-            <input type="number" id="generaciones" value="50" min="10" max="500" />
-          </div>
-          <div class="form-group">
-            <label for="tamano"><i class="fas fa-users"></i> Tamaño de Población:</label>
-            <input type="number" id="tamano" value="10" min="2" max="50" />
-          </div>
-          <div class="form-group">
-            <label for="mutacion"><i class="fas fa-random"></i> Tasa de Mutación:</label>
-            <input type="range" id="mutacion" min="0.01" max="1" step="0.01" value="0.1" />
-            <span id="mutacionValue">0.10</span>
-          </div>
-          <button id="btnEjecutar" class="btn btn-primary">
-            <i class="fas fa-play"></i> Ejecutar Algoritmo Genético
-          </button>
-        </div>
-      </section>
+        <main class="main-content">
+            <section class="control-panel">
+                <div class="card">
+                    <h2><i class="fas fa-cogs"></i> Configuración del AG</h2>
+                    
+                    <div class="form-group">
+                        <label for="populationSize"><i class="fas fa-users"></i> Tamaño de Población:</label>
+                        <input type="number" id="populationSize" value="4">
+                    </div>
+                    <div class="form-group">
+                        <label for="generations"><i class="fas fa-sync-alt"></i> Generaciones:</label>
+                        <input type="number" id="generations" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="mutationRate"><i class="fas fa-random"></i> Tasa de Mutación (0.0 - 1.0):</label>
+                        <input type="number" id="mutationRate" value="0.1" step="0.01" min="0" max="1">
+                    </div>
+                    
+                    <button id="runGAButton" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Ejecutar Análisis
+                    </button>
+                    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                        <div class="dna-spinner"></div>
+                        <span>Calculando...</span>
+                    </div>
+                </div>
+            </section>
 
-      <section class="results-panel">
-        <div id="loadingPanel" class="card loading-panel" style="display: none;">
-          <div class="loading-animation">
-            <div class="dna-spinner">
-              <div class="dna-strand"></div>
-              <div class="dna-strand"></div>
-            </div>
-            <h3>Buscando horario común...</h3>
-            <p id="loadingStatus">Procesando generaciones...</p>
-          </div>
-        </div>
+            <section class="results-panel">
+                <div class="card">
+                    <h2><i class="fas fa-chart-line"></i> Resultados del Algoritmo</h2>
+                    
+                    <div class="result-display">
+                        <h3>Horario Común Encontrado:</h3>
+                        <p id="foundSlotDisplay">
+                            <i class="fas fa-calendar-check"></i> Esperando ejecución...
+                        </p>
+                    </div>
 
-        <div id="resultsPanel" class="card results-display" style="display: none;">
-          <h2><i class="fas fa-check-circle"></i> Resultado Óptimo</h2>
-          <div class="results-grid">
-            <div class="stat-item">
-              <span class="stat-label">🕒 Horario encontrado:</span>
-              <span id="mejorHorario" class="stat-value">---</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">🔁 Generaciones utilizadas:</span>
-              <span id="totalGeneraciones" class="stat-value">---</span>
-            </div>
-          </div>
+                    <div class="chart-container">
+                        <h3><i class="fas fa-chart-bar"></i> Evolución del Fitness</h3>
+                        <div id="fitnessPlotContainer">
+                            <p style="text-align: center; color: #777;">La gráfica de evolución aparecerá aquí después de ejecutar el análisis.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="schedule-visualization">
+                        <h3><i class="fas fa-calendar-alt"></i> Horarios de los Profesores y Coincidencia</h3>
+                        <div id="scheduleGridContainer">
+                            </div>
+                    </div>
+                </div>
+            </section>
+        </main>
 
-          <div class="historial-section">
-            <h3><i class="fas fa-history"></i> Historial de generaciones</h3>
-            <ul id="historialGeneraciones"></ul>
-          </div>
+        <footer class="footer">
+            <p>&copy; 2025 - Algoritmo Genético para Asignación de Horarios</p>
+        </footer>
+    </div>
 
-          <div class="card">
-            <h3><i class="fas fa-chart-line"></i> Evolución del Algoritmo</h3>
-            <img src="../visualizaciones/grafico_fitness.png" alt="Gráfico de Fitness"/>
-          </div>
-
-          <button id="btnNuevo" class="btn btn-success">
-            <i class="fas fa-redo"></i> Nueva Ejecución
-          </button>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <p>&copy; 2025 - Algoritmo Genético de Horarios</p>
-    </footer>
-  </div>
-
-  <script>
-    const mutacionInput = document.getElementById('mutacion');
-    const mutacionLabel = document.getElementById('mutacionValue');
-    mutacionInput.addEventListener('input', () => {
-      mutacionLabel.textContent = parseFloat(mutacionInput.value).toFixed(2);
-    });
-
-    document.getElementById('btnEjecutar').addEventListener('click', async () => {
-      const gen = document.getElementById('generaciones').value;
-      const tam = document.getElementById('tamano').value;
-      const mut = document.getElementById('mutacion').value;
-
-      document.getElementById('loadingPanel').style.display = 'block';
-      document.getElementById('resultsPanel').style.display = 'none';
-
-      const res = await fetch(`/ejecutar?gen=${gen}&tam=${tam}&mut=${mut}`);
-      const data = await res.json();
-
-      document.getElementById('loadingPanel').style.display = 'none';
-      document.getElementById('resultsPanel').style.display = 'block';
-
-      document.getElementById('mejorHorario').textContent = data.mejor_horario;
-      document.getElementById('totalGeneraciones').textContent = data.generaciones;
-
-      const historialHTML = data.historial.map((gen, i) => {
-        return `<li><strong>G${i + 1}:</strong> ${gen.map(g => `${g[0]}h (${g[1]})`).join(', ')}</li>`;
-      }).join('');
-      document.getElementById('historialGeneraciones').innerHTML = historialHTML;
-    });
-
-    document.getElementById('btnNuevo').addEventListener('click', () => {
-      document.getElementById('resultsPanel').style.display = 'none';
-    });
-  </script>
+    <script src="../static/js.js"></script>
 </body>
 </html>

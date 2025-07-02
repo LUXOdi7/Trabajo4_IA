@@ -5,14 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const populationSizeInput = document.getElementById('populationSize');
     const generationsInput = document.getElementById('generations');
     const mutationRateInput = document.getElementById('mutationRate');
+    const numProfessorsInput = document.getElementById('numProfessors'); // NUEVO: Input para cantidad de profesores
+    const desiredSlotDurationInput = document.getElementById('desiredSlotDuration'); // NUEVO: Input para duración de slot libre
     const scheduleGridContainer = document.getElementById('scheduleGridContainer');
     const fitnessPlotContainer = document.getElementById('fitnessPlotContainer'); 
 
     runGAButton.addEventListener('click', async () => {
-        // Validar entradas
+        // Validar entradas existentes
         const populationSize = parseInt(populationSizeInput.value);
         const generations = parseInt(generationsInput.value);
         const mutationRate = parseFloat(mutationRateInput.value);
+        // Validar nuevas entradas
+        const numProfessors = parseInt(numProfessorsInput.value);
+        const desiredSlotDuration = parseFloat(desiredSlotDurationInput.value);
 
         if (isNaN(populationSize) || populationSize < 1 || populationSize > 1000) {
             alert("El tamaño de la población debe estar entre 1 y 1000.");
@@ -26,6 +31,19 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("La tasa de mutación debe estar entre 0.0 y 1.0.");
             return;
         }
+        if (isNaN(numProfessors) || numProfessors < 1 || numProfessors > 15) { // Limita a 15 profesores por rendimiento visual/lógico
+            alert("La cantidad de profesores debe estar entre 1 y 15.");
+            return;
+        }
+        if (isNaN(desiredSlotDuration) || desiredSlotDuration <= 0 || desiredSlotDuration > 8) { // Ejemplo: slot de hasta 8h
+            alert("La duración del slot libre debe ser un número positivo (ej. 0.5, 1.0, 2.0) y no exceder 8 horas.");
+            return;
+        }
+        if (desiredSlotDuration % 0.5 !== 0) {
+            alert("La duración del slot libre debe ser un múltiplo de 0.5 (ej. 1.0, 1.5, 2.0).");
+            return;
+        }
+
 
         // Mostrar spinner de carga
         loadingSpinner.style.display = 'flex';
@@ -42,30 +60,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ population_size: populationSize, generations: generations, mutation_rate: mutationRate }),
+                // ENVIAR NUEVOS PARÁMETROS AL BACKEND
+                body: JSON.stringify({ 
+                    population_size: populationSize, 
+                    generations: generations, 
+                    mutation_rate: mutationRate,
+                    num_professors: numProfessors, // AÑADIDO
+                    desired_slot_duration: desiredSlotDuration // AÑADIDO
+                }),
             });
 
             if (!response.ok) {
-                throw new Error(`Error HTTP: ${response.status}`);
+                // Leer el mensaje de error del backend si está disponible
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Error HTTP: ${response.status}`);
             }
 
             const data = await response.json();
             console.log(data);
 
-            // Actualizar display del horario encontrado
-            if (data.found_slot) {
+            // Mostrar detalles del horario encontrado
+            if (data.found_slot && data.found_slot.day) { 
+                const numFree = data.found_slot.num_professors_free;
+                const totalProfessors = data.found_slot.total_professors;
+                const availableProfs = data.found_slot.professors_available_in_best_slot.join(', ');
+
                 foundSlotDisplay.innerHTML = `
                     <i class="fas fa-calendar-check"></i> 
-                    ${data.found_slot.day}, ${data.found_slot.start_time} - ${data.found_slot.end_time}
+                    **Horario sugerido:** ${data.found_slot.day}, ${data.found_slot.start_time} - ${data.found_slot.end_time} (${data.slot_duration} horas)
+                    <br>
+                    <i class="fas fa-user-check"></i> 
+                    **Profesores disponibles:** ${numFree} de ${totalProfessors} 
+                    ${numFree > 0 ? `(${availableProfs})` : ''}
                 `;
             } else {
                 foundSlotDisplay.innerHTML = `
                     <i class="fas fa-exclamation-triangle"></i> 
-                    No se encontró un horario común de 2 horas con los parámetros actuales.
+                    No se encontró un horario común óptimo con los parámetros actuales. 
+                    Intenta ajustar los parámetros o revisar los horarios de los profesores.
                 `;
             }
 
-            // --- Cargar Gráfica de Evolución del Fitness (imagen estática) ---
+            // Cargar Gráfica de Evolución del Fitness
             if (data.fitness_plot_url) {
                 fitnessPlotContainer.innerHTML = ''; 
                 const img = document.createElement('img');
@@ -80,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fitnessPlotContainer.innerHTML = '<p style="text-align: center; color: #777;">No se pudo generar la gráfica de evolución del fitness.</p>';
             }
             
-            // --- Visualización de Horarios ---
+            // Visualización de Horarios
             drawProfessorSchedules(
                 data.professor_schedules, 
                 data.found_slot, 
@@ -88,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.possible_start_times, 
                 data.start_hour_day,
                 data.end_hour_day,
-                data.slot_duration,
+                data.slot_duration, // USAR LA DURACIÓN DINÁMICA
                 data.increment_time
             );
 
@@ -117,18 +153,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const canvas = card.querySelector('.schedule-canvas');
             const ctx = canvas.getContext('2d');
 
-            // Ajustes para dar más espacio a los horarios
-            const cellWidth = 90; // Ancho de celda aumentado
-            const cellHeight = 28; // Alto de celda aumentado
-            const headerHeight = 35; // Altura del encabezado de días
-            const timeColWidth = 65; // Ancho de la columna de tiempo
+            const cellWidth = 90; 
+            const cellHeight = 28; 
+            const headerHeight = 35; 
+            const timeColWidth = 65; 
 
             canvas.width = timeColWidth + (daysOfWeek.length * cellWidth);
-            canvas.height = headerHeight + (numHourCells * cellHeight) + 5; // Un poco de padding extra al final
+            canvas.height = headerHeight + (numHourCells * cellHeight) + 5; 
 
             // Colores
             const occupiedColor = '#ffadad'; 
-            const freeColor = '#d9ffda';     
+            const freeColor = '#d9ffda';     
             const commonSlotColor = '#8cff8c'; 
 
             // Dibujar fondo de libre
@@ -136,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fillRect(timeColWidth, headerHeight, canvas.width - timeColWidth, canvas.height - headerHeight);
 
             // Dibujar grilla y etiquetas de días
-            ctx.font = '12px Arial'; // Fuente ligeramente más grande
+            ctx.font = '12px Arial'; 
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#333';
@@ -149,8 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Horas
             ctx.textAlign = 'right';
-            ctx.textBaseline = 'top'; // Alinea texto a la parte superior de la celda
-            ctx.font = '10px Arial'; // Fuente más pequeña para las horas
+            ctx.textBaseline = 'top'; 
+            ctx.font = '10px Arial'; 
             for (let i = 0; i <= numHourCells; i++) {
                 const hour = startHourDay + (i * incrementTime);
                 let displayHour = `${Math.floor(hour).toString().padStart(2, '0')}`;
@@ -159,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     displayHour += ':00';
                 }
-                ctx.fillText(displayHour, timeColWidth - 5, headerHeight + i * cellHeight + 2); // Ajuste vertical
+                ctx.fillText(displayHour, timeColWidth - 5, headerHeight + i * cellHeight + 2); 
                 ctx.strokeRect(0, headerHeight + i * cellHeight, canvas.width, cellHeight); 
             }
 
@@ -179,11 +214,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.fillRect(x, y, cellWidth, height);
             });
 
-            // Dibujar el horario común encontrado (si existe)
-            if (foundSlot) {
+            // Dibujar el horario común encontrado (si existe y este profesor está disponible)
+            if (foundSlot && foundSlot.day && foundSlot.professors_available_in_best_slot.includes(profName)) {
                 const commonDayIndex = daysOfWeek.indexOf(foundSlot.day);
-                const commonStartHour = parseFloat(foundSlot.start_time.split(':')[0]) + (parseFloat(foundSlot.start_time.split(':')[1]) / 60);
-                const commonEndHour = parseFloat(foundSlot.end_time.split(':')[0]) + (parseFloat(foundSlot.end_time.split(':')[1]) / 60);
+                const commonStartHourParts = foundSlot.start_time.split(':').map(Number);
+                const commonStartHour = commonStartHourParts[0] + (commonStartHourParts[1] / 60);
+                
+                // AHORA USA EL slotDuration DINÁMICO
+                const commonEndHour = commonStartHour + slotDuration; 
 
                 const startCell = (commonStartHour - startHourDay) / incrementTime;
                 const endCell = (commonEndHour - startHourDay) / incrementTime;

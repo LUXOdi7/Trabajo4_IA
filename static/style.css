@@ -1,146 +1,140 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary-color: #6a82fb; /* Azul/Púrpura */
-    --secondary-color: #fc5c7d; /* Rosa */
-    --dark-bg: #2c3e50; /* Azul oscuro */
-    --light-bg: #ecf0f1; /* Gris claro */
-    --text-color: #34495e; /* Gris oscuro */
-    --card-bg: rgba(255, 255, 255, 0.9); /* Blanco translúcido */
-    --border-color: rgba(0, 0, 0, 0.1);
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
-    --shadow-dark: 0 8px 25px rgba(0, 0, 0, 0.2);
-    --glass-effect: rgba(255, 255, 255, 0.2);
+    --primary-color: #4CAF50; /* Verde brillante */
+    --secondary-color: #2196F3; /* Azul estándar */
+    --bg-light: #f4f7f6; /* Fondo muy claro */
+    --card-bg: #ffffff; /* Blanco puro para tarjetas */
+    --text-dark: #333333; /* Texto oscuro */
+    --text-muted: #666666; /* Texto secundario */
+    --border-light: #e0e0e0; /* Borde claro */
+    --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.08); /* Sombra suave */
+    --gradient-header: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    --gradient-btn: linear-gradient(45deg, var(--primary-color), #66BB6A);
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Quicksand', sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: var(--text-color);
+    background-color: var(--bg-light);
+    color: var(--text-dark);
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Alinea al inicio para que el contenido fluya */
-    padding: 20px;
+    align-items: flex-start;
+    padding: 25px;
     box-sizing: border-box;
 }
 
 .container {
-    background: var(--light-bg);
+    background-color: var(--card-bg);
     border-radius: 20px;
-    box-shadow: var(--shadow-dark);
-    max-width: 1300px; /* Aumentado para dar más espacio horizontal */
+    box-shadow: var(--shadow-soft);
+    max-width: 1200px; /* Ancho optimizado para la nueva estructura */
     width: 100%;
-    overflow: hidden; /* Para contener los bordes redondeados */
+    overflow: hidden;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Contenedor principal en columna */
 }
 
 .header {
-    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    background: var(--gradient-header);
     color: white;
-    padding: 30px 20px;
+    padding: 35px 20px;
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: var(--shadow-light);
+    box-shadow: var(--shadow-soft);
 }
 
 .header h1 {
     margin: 0 0 10px;
-    font-size: 2.5em;
+    font-size: 2.8em;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 .header p {
     margin: 0;
     font-size: 1.1em;
-    font-weight: 300;
+    font-weight: 400;
     opacity: 0.9;
 }
 
+/* === MODIFICACIÓN CLAVE DE LA ESTRUCTURA === */
 .main-content {
     display: flex;
-    flex-wrap: wrap;
-    padding: 20px;
-    gap: 20px; /* Espacio entre las secciones */
+    flex-direction: column; /* Apila los paneles verticalmente */
+    padding: 30px;
+    gap: 30px; /* Espacio entre los paneles (configuración y resultados) */
 }
 
 .control-panel, .results-panel {
     border-radius: 15px;
     background: var(--card-bg);
-    box-shadow: var(--shadow-light);
-    padding: 25px;
+    box-shadow: var(--shadow-soft);
+    padding: 30px;
     box-sizing: border-box;
+    width: 100%; /* Ambos paneles ocupan el 100% del ancho disponible */
     display: flex;
     flex-direction: column;
-}
-
-.control-panel {
-    flex: 0 0 280px; /* Ancho fijo para la configuración, más compacto */
-    max-width: 300px;
-}
-
-.results-panel {
-    flex: 1; /* Ocupa el espacio restante */
-    min-width: 600px; /* Asegura un mínimo para los resultados */
 }
 
 .card h2 {
     color: var(--primary-color);
     margin-top: 0;
-    font-size: 1.6em;
+    font-size: 1.8em;
     font-weight: 600;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border-light);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: var(--text-color);
+    color: var(--text-dark);
     font-size: 0.95em;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-input[type="number"], input[type="range"] {
-    width: calc(100% - 20px);
-    padding: 10px;
-    border: 1px solid var(--border-color);
+input[type="number"], 
+input[type="range"] {
+    width: calc(100% - 20px); /* Ajuste para padding */
+    padding: 12px;
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     font-size: 1em;
     transition: all 0.3s ease;
     box-sizing: border-box;
-    background: var(--light-bg);
-    color: var(--text-color);
+    background-color: var(--bg-light);
+    color: var(--text-dark);
 }
 
-input[type="number"]:focus, input[type="range"]:focus {
+input[type="number"]:focus, 
+input[type="range"]:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(106, 130, 251, 0.2);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
     outline: none;
 }
 
 .btn {
     display: block;
     width: 100%;
-    padding: 12px 20px;
-    margin-top: 25px;
+    padding: 15px 20px;
+    margin-top: 30px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 1.1em;
     font-weight: 700;
     cursor: pointer;
@@ -148,17 +142,18 @@ input[type="number"]:focus, input[type="range"]:focus {
     text-align: center;
     text-decoration: none;
     color: white;
+    text-transform: uppercase;
 }
 
 .btn-primary {
-    background: linear-gradient(45deg, var(--primary-color), #7b9cff);
-    box-shadow: 0 4px 10px rgba(106, 130, 251, 0.3);
+    background: var(--gradient-btn);
+    box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(45deg, #7b9cff, var(--primary-color));
+    background: linear-gradient(45deg, #66BB6A, var(--primary-color));
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(106, 130, 251, 0.4);
+    box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
 }
 
 .btn-primary:disabled {
@@ -166,45 +161,26 @@ input[type="number"]:focus, input[type="range"]:focus {
     cursor: not-allowed;
     box-shadow: none;
     transform: none;
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
 .loading-spinner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 25px;
     font-weight: 600;
     color: var(--primary-color);
 }
 
-.dna-spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid var(--primary-color);
+.spinner {
+    border: 4px solid rgba(76, 175, 80, 0.2);
+    border-top: 4px solid var(--primary-color);
     border-radius: 50%;
-    border-top-color: transparent;
+    width: 40px;
+    height: 40px;
     animation: spin 1s linear infinite;
     margin-bottom: 10px;
-    position: relative;
-}
-
-.dna-spinner::before, .dna-spinner::after {
-    content: '';
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: var(--secondary-color);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: pulse 1s infinite alternate;
-}
-
-.dna-spinner::after {
-    background: var(--primary-color);
-    animation-delay: 0.5s;
 }
 
 @keyframes spin {
@@ -212,59 +188,58 @@ input[type="number"]:focus, input[type="range"]:focus {
     100% { transform: rotate(360deg); }
 }
 
-@keyframes pulse {
-    0% { transform: translate(-50%, -50%) scale(0.5); }
-    100% { transform: translate(-50%, -50%) scale(1.2); }
-}
-
 .result-display {
-    background: var(--glass-effect);
-    padding: 15px;
+    background-color: var(--bg-light);
+    padding: 20px;
     border-radius: 10px;
-    margin-bottom: 25px;
-    border: 1px solid var(--border-color);
+    margin-bottom: 30px;
+    border: 1px solid var(--border-light);
     text-align: center;
 }
 
 .result-display h3 {
     color: var(--secondary-color);
     margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.2em;
-}
-
-.result-display p {
-    font-size: 1.1em;
+    margin-bottom: 15px;
+    font-size: 1.3em;
     font-weight: 600;
-    color: var(--text-color);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
 }
 
+.result-display p {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0;
+}
+
 .chart-container {
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
 .chart-container h3 {
-    color: var(--primary-color);
-    font-size: 1.2em;
-    margin-bottom: 15px;
+    color: var(--text-dark);
+    font-size: 1.5em;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
-/* Contenedor de la gráfica de evolución del fitness */
 #fitnessPlotContainer {
-    background: var(--card-bg);
-    padding: 15px;
+    background-color: var(--bg-light);
+    padding: 20px;
     border-radius: 10px;
-    border: 1px solid var(--border-color);
-    text-align: center;
-    min-height: 250px; /* Asegura un tamaño mínimo */
-    display: flex; /* Para centrar el contenido */
+    border: 1px solid var(--border-light);
+    min-height: 250px; /* Asegura un espacio para el gráfico */
+    display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -274,96 +249,103 @@ input[type="number"]:focus, input[type="range"]:focus {
     height: auto;
     display: block;
     margin: 0 auto;
-    border-radius: 8px; /* Ligeramente redondeado para que coincida */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08); /* Sutil sombra */
+    border-radius: 8px;
 }
 
-
 .schedule-visualization {
-    margin-top: 25px;
+    margin-top: 30px;
 }
 
 .schedule-visualization h3 {
-    color: var(--primary-color);
-    font-size: 1.2em;
-    margin-bottom: 15px;
+    color: var(--text-dark);
+    font-size: 1.5em;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 #scheduleGridContainer {
-    display: flex;
-    flex-wrap: wrap; /* Permite que las tarjetas de profesor se envuelvan */
-    gap: 20px; /* Espacio entre las tarjetas de los profesores */
-    justify-content: center; /* Centra las tarjetas en el contenedor */
+    display: grid; /* Usamos grid para las tarjetas de horario */
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* 2 columnas en pantallas grandes, 1 en pequeñas */
+    gap: 25px; /* Espacio entre las tarjetas */
+    justify-items: center; /* Centra los elementos en la grilla */
 }
 
 .professor-schedule-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    flex: 1 1 calc(50% - 20px); /* Dos tarjetas por fila con espacio, ajusta para 2 columnas */
-    min-width: 380px; /* Mínimo para una visualización decente del horario */
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: var(--shadow-soft);
     box-sizing: border-box;
 }
 
 .professor-schedule-card h4 {
-    color: var(--text-color);
+    color: var(--primary-color);
     margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1.1em;
+    margin-bottom: 20px;
+    font-size: 1.2em;
     text-align: center;
+    font-weight: 600;
 }
 
 .schedule-canvas {
-    display: block; /* Elimina espacio extra debajo del canvas */
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    margin: 0 auto; /* Centra el canvas dentro de su tarjeta */
-    background-color: white; /* Asegura un fondo blanco para el dibujo */
+    display: block;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    margin: 0 auto;
+    background-color: #ffffff; /* Fondo blanco para el canvas */
 }
 
-
 .footer {
-    background: var(--dark-bg);
+    background-color: var(--text-dark); /* Fondo oscuro para el footer */
     color: white;
     text-align: center;
     padding: 20px;
     font-size: 0.9em;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0 0 20px 20px; /* Redondeo en las esquinas inferiores */
 }
 
 /* Responsividad */
-@media (max-width: 1000px) {
+@media (max-width: 900px) {
     .main-content {
-        flex-direction: column; /* Apila las secciones en pantallas más pequeñas */
-        align-items: center;
+        padding: 20px;
     }
-
     .control-panel, .results-panel {
-        width: 100%; /* Ocupan todo el ancho disponible */
-        max-width: 100%;
-        min-width: unset; /* Elimina el min-width */
+        padding: 20px;
     }
-
+    .header h1 {
+        font-size: 2.2em;
+    }
+    .header p {
+        font-size: 1em;
+    }
+    .card h2 {
+        font-size: 1.6em;
+    }
+    .btn {
+        font-size: 1em;
+        padding: 12px 15px;
+    }
+    #scheduleGridContainer {
+        grid-template-columns: 1fr; /* Una columna en pantallas más pequeñas */
+    }
     .professor-schedule-card {
-        flex: 1 1 100%; /* Una tarjeta por fila en pantallas pequeñas */
-        min-width: unset;
+        min-width: unset; /* Eliminar el min-width para adaptarse mejor */
+        width: 100%;
     }
 }
 
 @media (max-width: 500px) {
+    body {
+        padding: 15px;
+    }
     .header h1 {
         font-size: 1.8em;
     }
     .header p {
         font-size: 0.9em;
-    }
-    .btn {
-        font-size: 1em;
-        padding: 10px 15px;
     }
 }
